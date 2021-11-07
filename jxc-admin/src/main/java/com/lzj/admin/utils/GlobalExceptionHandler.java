@@ -13,7 +13,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ParamsException.class)
     @ResponseBody //返回一个json
     public RespBean paramsExceptionHandler(ParamsException e){
-        return RespBean.error(e.getMessage());
+        return RespBean.error(e.getMsg());
     }
 
     @ExceptionHandler(Exception.class)

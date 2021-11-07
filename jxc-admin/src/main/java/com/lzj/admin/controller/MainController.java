@@ -3,12 +3,11 @@ package com.lzj.admin.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpSession;
-
 @Controller
 public class MainController {
+
     /**
-     * system login index view
+     * 系统登录页
      * @return
      */
     @RequestMapping("index")
@@ -17,7 +16,7 @@ public class MainController {
     }
 
     /**
-     * system main view
+     * 系统主页面
      * @return
      */
     @RequestMapping("main")
@@ -26,7 +25,7 @@ public class MainController {
     }
 
     /**
-     * system welcome view
+     * 系统欢迎页
      * @return
      */
     @RequestMapping("welcome")
@@ -34,15 +33,6 @@ public class MainController {
         return "welcome";
     }
 
-    /**
-     * 用户推出
-     * @return
-     */
-    @RequestMapping("signout")
-    public String signout(HttpSession session){
-        session.removeAttribute("user");
-        return "redirect:index";
-    }
 
 
 }

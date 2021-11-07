@@ -16,6 +16,7 @@ public class ParamsException extends RuntimeException{
 
     public ParamsException(String msg){
         super(msg);
+        this.msg = msg;
         this.code = code;
     }
 
@@ -27,5 +28,9 @@ public class ParamsException extends RuntimeException{
 
     public Integer getCode(){
         return code;
+    }
+
+    public String getMsg() {
+        return msg;
     }
 }

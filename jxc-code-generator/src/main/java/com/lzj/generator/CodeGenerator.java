@@ -46,19 +46,19 @@ public class CodeGenerator {
         // xml是否开启BaseColumnList
         gc.setBaseColumnList(true);
         // 是否开启swagger2注解
-        gc.setSwagger2(true);
+        gc.setSwagger2(true);//前提是数据库中有注释
 
         mpg.setGlobalConfig(gc);
 
         //数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://localhost:3306/datagrip?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC");
+        dsc.setUrl("jdbc:mysql://localhost:3306/jxc?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("123456");
+        dsc.setPassword("12345678");
         mpg.setDataSource(dsc);
 
-        //包配置
+        //最终生成的包配置
         PackageConfig pc = new PackageConfig();
         pc.setParent("com.lzj.admin")
                 .setEntity("pojo")
@@ -66,8 +66,8 @@ public class CodeGenerator {
                 .setService("service")
                 .setServiceImpl("service.impl")
                 .setController("controller");
-
         mpg.setPackageInfo(pc);
+
         // 自定义配置
         InjectionConfig cfg = new InjectionConfig() {
             @Override
@@ -88,6 +88,7 @@ public class CodeGenerator {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输出文件名，如果Entity设置了前后缀，此处的xml名称会跟着发生变化
+                // 这里定义生成的sql映射文件目录和命名
                 return projectPath + "/jxc-admin/src/main/resources/mapper/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
             }
         });
