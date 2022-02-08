@@ -5,7 +5,7 @@ $(function () {
 function loadMenusInfo() {
     $.ajax({
         type:"post",
-        url:ctx+"/menu/queryAllMenus",
+        url: ctx+"/menu/queryAllMenus",
         data:{
             roleId:$("#roleId").val()
         },
@@ -30,7 +30,7 @@ function loadMenusInfo() {
                     onCheck: zTreeOnCheck
                 }
             };
-            var zNodes =data;
+            var zNodes = data;
             zTreeObj=$.fn.zTree.init($("#test1"), setting, zNodes);
         }
     })

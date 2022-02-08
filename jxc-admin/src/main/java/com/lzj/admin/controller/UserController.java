@@ -6,6 +6,7 @@ import com.lzj.admin.model.RespBean;
 import com.lzj.admin.pojo.User;
 import com.lzj.admin.query.UserQuery;
 import com.lzj.admin.service.IUserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,6 +82,7 @@ public class UserController {
      * @return
      */
     @RequestMapping("list")
+    @PreAuthorize("hasAnyAuthority('101003')") // 基于注解的权限控制，内括号输入对应的权限val
     @ResponseBody
     public Map<String, Object> userList(UserQuery userQuery){
         return userService.userList(userQuery);
@@ -139,6 +141,7 @@ public class UserController {
     }
 
     @RequestMapping("index")
+    @PreAuthorize("hasAnyAuthority('1010')") // 基于注解的权限控制，内括号输入对应的权限val
     public String index(){
         return "user/user";
     }

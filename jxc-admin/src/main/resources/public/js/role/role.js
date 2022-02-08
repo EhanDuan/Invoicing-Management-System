@@ -98,6 +98,8 @@ layui.use(['table','layer'],function(){
             layer.msg("暂不支持批量角色授权!", {icon: 5});
             return;
         }
+        // var url =" http://localhost:8989/menu/queryAllMenus";
+        console.log("arrived here");
         var url  =  ctx+"/role/toAddGrantPage?roleId="+datas[0].id;
         var title="角色管理-角色授权";
         layui.layer.open({
