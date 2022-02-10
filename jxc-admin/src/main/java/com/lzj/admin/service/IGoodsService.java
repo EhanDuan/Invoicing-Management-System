@@ -27,4 +27,8 @@ public interface IGoodsService extends IService<Goods> {
     void updateStock(Goods goods);
 
     void deleteStock(Integer id);
+
+    Map<String, Object> stockList(GoodsQuery goodsQuery);
+
+    Goods getGoodsInfoById(Integer id);
 }

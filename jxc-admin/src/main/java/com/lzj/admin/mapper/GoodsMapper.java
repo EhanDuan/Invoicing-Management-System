@@ -17,4 +17,6 @@ import org.apache.ibatis.annotations.Param;
 public interface GoodsMapper extends BaseMapper<Goods> {
 
     IPage<Goods> queryGoodsByParams(IPage<Goods> page, @Param("goodsQuery") GoodsQuery goodsQuery);
+
+    Goods getGoodsInfoById(Integer gId);
 }

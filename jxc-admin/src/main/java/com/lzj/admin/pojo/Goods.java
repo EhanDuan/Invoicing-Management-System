@@ -81,5 +81,6 @@ public class Goods implements Serializable {
     @TableField(exist = false)
     private String typeName;
 
-
+    @TableField(exist = false)
+    private Integer saleTotal;
 }

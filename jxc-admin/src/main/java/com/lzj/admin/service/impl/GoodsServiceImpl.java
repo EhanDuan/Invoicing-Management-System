@@ -7,8 +7,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lzj.admin.mapper.GoodsMapper;
 import com.lzj.admin.pojo.Goods;
 import com.lzj.admin.query.GoodsQuery;
+import com.lzj.admin.service.ICustomerReturnListGoodsService;
 import com.lzj.admin.service.IGoodsService;
 import com.lzj.admin.service.IGoodsTypeService;
+import com.lzj.admin.service.ISaleListGoodsService;
 import com.lzj.admin.utils.AssertUtil;
 import com.lzj.admin.utils.PageResultUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,6 +35,12 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     @Resource
     private IGoodsTypeService goodsTypeService;
+
+    @Resource
+    private ISaleListGoodsService saleListGoodsService;
+
+    @Resource
+    private ICustomerReturnListGoodsService customerReturnListGoodsService;
 
     @Override
     public Map<String, Object> goodsList(GoodsQuery goodsQuery) {
@@ -142,6 +151,37 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
         temp.setInventoryQuantity(0);
         AssertUtil.isTrue(!(this.updateById(temp)), "商品删除失败！");
+    }
+
+    @Override
+    public Map<String, Object> stockList(GoodsQuery goodsQuery) {
+        IPage<Goods> page = new Page<Goods>(goodsQuery.getPage(), goodsQuery.getLimit());
+
+        // 如果点了一个父类别，如服饰，下面所有的子类别商品都要显示
+        if(null != goodsQuery.getTypeId()){
+            goodsQuery.setTypeIds(goodsTypeService.queryAllSubTypeIdsByTypeId(goodsQuery.getTypeId()));
+        }
+
+        page = this.baseMapper.queryGoodsByParams(page, goodsQuery);
+
+        List<Goods> goodsList = page.getRecords();
+        //需要添加销售总数
+
+        // 通过退货和销售表
+        goodsList.forEach(g -> {
+            // 销售总数
+            g.setSaleTotal(
+                    saleListGoodsService.getSaleTotalByGoodsId(g.getId())
+                - customerReturnListGoodsService.getReturnTotalByGoodsId(g.getIsDel())
+            );
+        });
+
+        return PageResultUtil.getResult(page.getTotal(), goodsList);
+    }
+
+    @Override
+    public Goods getGoodsInfoById(Integer gId) {
+        return this.baseMapper.getGoodsInfoById(gId);
     }
 
     public String genGoodsCode(){
