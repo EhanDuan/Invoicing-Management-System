@@ -2,6 +2,9 @@ package com.lzj.admin.service;
 
 import com.lzj.admin.pojo.SaleListGoods;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.lzj.admin.query.SaleListGoodsQuery;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -14,4 +17,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface ISaleListGoodsService extends IService<SaleListGoods> {
 
     Integer getSaleTotalByGoodsId(Integer id);
+
+    Map<String, Object> saleListGoodsList(SaleListGoodsQuery saleListGoodsQuery);
 }

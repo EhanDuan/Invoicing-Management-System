@@ -16,17 +16,17 @@ import java.util.Date;
 
 /**
  * <p>
- * 退货单表
+ * 客户退货单表
  * </p>
  *
  * @author Yihan Duan
- * @since 2022-02-09
+ * @since 2022-02-11
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("t_return_list")
-@ApiModel(value="ReturnList对象", description="退货单表")
-public class ReturnList implements Serializable {
+@TableName("t_customer_return_list")
+@ApiModel(value="CustomerReturnList对象", description="客户退货单表")
+public class CustomerReturnList implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -40,29 +40,30 @@ public class ReturnList implements Serializable {
     @ApiModelProperty(value = "应付金额")
     private Float amountPayable;
 
-    @ApiModelProperty(value = "备注")
-    private String remarks;
-
     @ApiModelProperty(value = "退货日期")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
-    private Date returnDate;
+    private Date customerReturnDate;
 
     @ApiModelProperty(value = "退货单号")
-    private String returnNumber;
+    private String customerReturnNumber;
+
+    @ApiModelProperty(value = "备注")
+    private String remarks;
 
     @ApiModelProperty(value = "交易状态")
     private Integer state;
 
-    @ApiModelProperty(value = "供应商")
-    private Integer supplierId;
-
     @ApiModelProperty(value = "操作用户")
     private Integer userId;
 
-    @TableField(exist = false)
-    private String username;
+    @ApiModelProperty(value = "客户id")
+    private Integer customerId;
 
     @TableField(exist = false)
-    private String supplierName;
+    private String userName;
+
+    @TableField(exist = false)
+    private String customerName;
+
 }

@@ -96,7 +96,6 @@ public class PurchaseListServiceImpl extends ServiceImpl<PurchaseListMapper, Pur
         page = this.baseMapper.purchaseList(page, purchaseListQuery);
 
         return PageResultUtil.getResult(page.getTotal(), page.getRecords());
-
     }
 
     @Override

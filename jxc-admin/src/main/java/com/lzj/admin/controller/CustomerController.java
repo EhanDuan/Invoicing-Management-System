@@ -1,6 +1,7 @@
 package com.lzj.admin.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.lzj.admin.model.RespBean;
 import com.lzj.admin.pojo.Customer;
 import com.lzj.admin.query.CustomerQuery;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -81,5 +83,15 @@ public class CustomerController {
     public RespBean deleteSupplier(Integer[] ids){
         customerService.deleteCustomer(ids);
         return RespBean.success("客户记录删除成功！");
+    }
+
+    /**
+     * 查询所有未删除客户
+     * @return
+     */
+    @RequestMapping("allCustomers")
+    @ResponseBody
+    public List<Customer> allCustomers(){
+        return customerService.list(new QueryWrapper<Customer>().eq("is_del", 0));
     }
 }

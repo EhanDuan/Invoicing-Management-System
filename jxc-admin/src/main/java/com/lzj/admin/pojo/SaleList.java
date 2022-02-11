@@ -16,17 +16,17 @@ import java.util.Date;
 
 /**
  * <p>
- * 退货单表
+ * 销售单表
  * </p>
  *
  * @author Yihan Duan
- * @since 2022-02-09
+ * @since 2022-02-10
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("t_return_list")
-@ApiModel(value="ReturnList对象", description="退货单表")
-public class ReturnList implements Serializable {
+@TableName("t_sale_list")
+@ApiModel(value="SaleList对象", description="销售单表")
+public class SaleList implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,26 +43,28 @@ public class ReturnList implements Serializable {
     @ApiModelProperty(value = "备注")
     private String remarks;
 
-    @ApiModelProperty(value = "退货日期")
+    @ApiModelProperty(value = "销售日期")
+    private Date saleDate;
+
+    @ApiModelProperty(value = "销售单号")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
-    private Date returnDate;
-
-    @ApiModelProperty(value = "退货单号")
-    private String returnNumber;
+    private String saleNumber;
 
     @ApiModelProperty(value = "交易状态")
     private Integer state;
 
-    @ApiModelProperty(value = "供应商")
-    private Integer supplierId;
-
     @ApiModelProperty(value = "操作用户")
     private Integer userId;
 
-    @TableField(exist = false)
-    private String username;
+    @ApiModelProperty(value = "客户id")
+    private Integer customerId;
 
     @TableField(exist = false)
-    private String supplierName;
+    private String userName;
+
+    @TableField(exist = false)
+    private String customerName;
+
+
 }

@@ -1,9 +1,14 @@
 package com.lzj.admin.controller;
 
 
-import org.springframework.web.bind.annotation.RequestMapping;
-
+import com.lzj.admin.query.SaleListGoodsQuery;
+import com.lzj.admin.service.ISaleListGoodsService;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import java.util.Map;
 
 /**
  * <p>
@@ -14,7 +19,16 @@ import org.springframework.stereotype.Controller;
  * @since 2022-02-10
  */
 @Controller
-@RequestMapping("/sale-list-goods")
+@RequestMapping("/saleListGoods")
 public class SaleListGoodsController {
+
+    @Resource
+    private ISaleListGoodsService saleListGoodsService;
+
+    @RequestMapping("list")
+    @ResponseBody
+    public Map<String, Object> saleListGoodsList(SaleListGoodsQuery saleListGoodsQuery){
+        return saleListGoodsService.saleListGoodsList(saleListGoodsQuery);
+    }
 
 }
