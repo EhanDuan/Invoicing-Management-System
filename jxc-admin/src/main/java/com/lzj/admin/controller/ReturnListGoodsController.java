@@ -31,7 +31,4 @@ public class ReturnListGoodsController {
         return returnListGoodsService.purchaseListGoodsList(returnListGoodsQuery);
     }
 
-
-
-
 }

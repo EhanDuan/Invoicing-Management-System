@@ -15,6 +15,7 @@ public class GoodsQuery extends BaseQuery{
     /**
      * type = 1， 库存量 = 0
      * type = 2， 库存量 > 0
+     * type = 3,  库存量 < limit
      */
     private Integer type;
 }

@@ -24,8 +24,6 @@ public class CommonController {
     @Resource
     private IGoodsService goodsService;
 
-
-
     /**
      * 添加商品-选择商品页
      * @return
@@ -97,5 +95,30 @@ public class CommonController {
 
     }
 
+    @RequestMapping("toDamageOverflowSearchPage")
+    public String toDamageOverflowSearchPage(){
+        return "common/damage_overflow_search";
+    }
+
+    /**
+     * 库存报警默认页
+     * @return
+     */
+    @RequestMapping("alarmPage")
+    public String alarmPage(){
+        return "common/alarm";
+    }
+
+    /**
+     * 库存报警查询接口
+     * @param goodsQuery
+     * @return
+     */
+    @RequestMapping("listAlarm")
+    @ResponseBody
+    public Map<String, Object> listAlarm(GoodsQuery goodsQuery){
+        goodsQuery.setType(3);
+        return goodsService.goodsList(goodsQuery);
+    }
 
 }
