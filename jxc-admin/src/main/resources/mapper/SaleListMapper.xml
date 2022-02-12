@@ -61,5 +61,116 @@
 
         </where>
     </select>
+    <select id="countSaleTotal" resultType="java.lang.Long">
+        select
+               count(*)
+        from t_sale_list sl
+        left join t_customer s on sl.customer_id = s.id
+        left join t_sale_list_goods slg on sl.id = slg.purchase_list_id
+        left join t_goods_type gt on slg.type_id = gt.id
+        <where>
+            <if test="null != saleListQuery.startDate and saleListQuery.startDate != ''">
+                and  sl.sale_date &gt;= #{saleListQuery.startDate}
+            </if>
+
+            <if test="null != saleListQuery.endDate and saleListQuery.endDate != ''">
+                and  sl.purchase_date &lt;= #{saleListQuery.endDate}
+            </if>
+
+            <if test="null != saleListQuery.goodsName and saleListQuery.goodsName != ''">
+                and  (
+                slg.name like concat('%', #{saleListQuery.goodsName}, '%') or
+
+                slg.code = #{saleListQuery.goodsName}
+                )
+            </if>
+
+            <if test="null != saleListQuery.typeIds and saleListQuery.typeIds.size>0">
+                and slg.type_id in
+                <foreach collection="saleListQuery.typeIds" item="typeId" open="(" separator="," close=")">
+                    #{typeId}
+                </foreach>
+            </if>
+        </where>
+
+    </select>
+
+
+    <select id="countSaleList" resultType="com.lzj.admin.model.CountResultModel">
+        select
+            sl.sale_number as number,
+            sl.sale_date as date,
+            s.name as name,
+            slg.code,
+            slg.name as goodsName,
+            slg.model,
+            slg.unit as unitName,
+            slg.price,
+            slg.num,
+            slg.total,
+            gt.name as typeName
+        from t_sale_list sl
+        left join t_customer s on sl.customer_id = s.id
+        left join t_sale_list_goods slg on sl.id = slg.purchase_list_id
+        left join t_goods_type gt on slg.type_id = gt.id
+        <where>
+            <if test="null != saleListQuery.startDate and saleListQuery.startDate != ''">
+                and  sl.sale_date &gt;= #{saleListQuery.startDate}
+            </if>
+
+            <if test="null != saleListQuery.endDate and saleListQuery.endDate != ''">
+                and  sl.purchase_date &lt;= #{saleListQuery.endDate}
+            </if>
+
+            <if test="null != saleListQuery.goodsName and saleListQuery.goodsName != ''">
+                and  (
+                slg.name like concat('%', #{saleListQuery.goodsName}, '%') or
+
+                slg.code = #{saleListQuery.goodsName}
+                )
+            </if>
+
+            <if test="null != saleListQuery.typeIds and saleListQuery.typeIds.size>0">
+                and slg.type_id in
+                <foreach collection="saleListQuery.typeIds" item="typeId" open="(" separator="," close=")">
+                    #{typeId}
+                </foreach>
+            </if>
+        </where>
+
+        limit #{saleListQuery.index}, #{saleListQuery.limit}
+
+
+    </select>
+    <select id="countDaySale" resultType="java.util.Map">
+        select
+            sum(t3.purchase_price * t1.num) as amountCost,
+            sum(t1.price * t1.num) as amountSale,
+            t2.sale_date as sale_date
+        from
+            t_sale_list_goods t1
+                left join t_sale_list t2 on t1.sale_list_id = t2.id
+                left join t_goods t3 on t1.goods_id = t3.id
+
+        where t2.sale_date between #{begin} and #{end}
+        group by t2.sale_date
+    </select>
+
+
+    <select id="countMonthSale" resultType="java.util.Map">
+        select
+            sum(t3.purchase_price * t1.num) as amountCost,
+            sum(t1.price * t1.num) as amountSale,
+            DATE_FORMAT(t2.sale_date, "%Y-%m") as sale_date
+        from
+            t_sale_list_goods t1
+                left join t_sale_list t2 on t1.sale_list_id = t2.id
+                left join t_goods t3 on t1.goods_id = t3.id
+
+        where DATE_FORMAT(t2.sale_date, "%Y-%m") between #{begin} and #{end}
+        group by DATE_FORMAT(t2.sale_date, "%Y-%m")
+
+    </select>
+
 
 </mapper>

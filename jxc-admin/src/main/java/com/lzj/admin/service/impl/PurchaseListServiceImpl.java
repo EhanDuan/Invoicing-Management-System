@@ -5,11 +5,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lzj.admin.mapper.PurchaseListMapper;
+import com.lzj.admin.model.CountResultModel;
 import com.lzj.admin.pojo.Goods;
 import com.lzj.admin.pojo.PurchaseList;
 import com.lzj.admin.pojo.PurchaseListGoods;
 import com.lzj.admin.query.PurchaseListQuery;
 import com.lzj.admin.service.IGoodsService;
+import com.lzj.admin.service.IGoodsTypeService;
 import com.lzj.admin.service.IPurchaseListGoodsService;
 import com.lzj.admin.service.IPurchaseListService;
 import com.lzj.admin.utils.AssertUtil;
@@ -40,6 +42,9 @@ public class PurchaseListServiceImpl extends ServiceImpl<PurchaseListMapper, Pur
 
     @Resource
     private IGoodsService goodsService;
+
+    @Resource
+    private IGoodsTypeService goodsTypeService;
 
     @Override
     public String getNextPurchaseNumber() {
@@ -109,5 +114,41 @@ public class PurchaseListServiceImpl extends ServiceImpl<PurchaseListMapper, Pur
         AssertUtil.isTrue(!(purchaseListGoodsService.remove(new QueryWrapper<PurchaseListGoods>().eq("purchase_list_id", id))), "记录删除失败！");
 
         AssertUtil.isTrue(!(this.removeById(id)), "记录删除失败");
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void updatePurchaseListState(Integer pId) {
+        PurchaseList purchaseList = this.getById(pId);
+        AssertUtil.isTrue(null == purchaseList, "待结算的记录不存在！");
+        AssertUtil.isTrue(purchaseList.getState() == 1, "该记录已支付！");
+        purchaseList.setState(1);
+        AssertUtil.isTrue(!(this.updateById(purchaseList)), "记录结算失败！");
+    }
+
+    /**
+     * 采购统计分页查询
+     * 1.查总数
+     * 2.查当前页列表
+     * @param purchaseListQuery
+     * @return
+     */
+    @Override
+    public Map<String, Object> countPurchase(PurchaseListQuery purchaseListQuery) {
+        if(null != purchaseListQuery.getTypeIds()){
+            List<Integer> typeIds = goodsTypeService.queryAllSubTypeIdsByTypeId(purchaseListQuery.getTypeId());
+            purchaseListQuery.setTypeIds(typeIds);
+        }
+
+        /**
+         * 1 --> start : 0
+         * 2 --> start : 10
+         * 3 --> start : 20
+         */
+        purchaseListQuery.setIndex((purchaseListQuery.getPage() - 1) * purchaseListQuery.getLimit());
+        Long count = this.baseMapper.countPurchaseTotal(purchaseListQuery);
+        List<CountResultModel> list = this.baseMapper.countPurchaseList(purchaseListQuery);
+
+        return PageResultUtil.getResult(count, list);
     }
 }

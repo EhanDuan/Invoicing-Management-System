@@ -1,10 +1,14 @@
 package com.lzj.admin.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.lzj.admin.model.CountResultModel;
 import com.lzj.admin.pojo.SaleList;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.lzj.admin.query.SaleListQuery;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -18,5 +22,13 @@ public interface SaleListMapper extends BaseMapper<SaleList> {
 
     String getNextSaleNumber();
 
-    IPage<SaleList> saleListQuery(IPage<SaleList> page, @Param("saleListQuery") SaleListQuery saleListQuery);
+    IPage<SaleList> saleList(IPage<SaleList> page, @Param("saleListQuery") SaleListQuery saleListQuery);
+
+    Long countSaleTotal(@Param("saleListQuery") SaleListQuery saleListQuery);
+
+    List<CountResultModel> countSaleList(@Param("saleListQuery") SaleListQuery saleListQuery);
+
+    List<Map<String, Object>> countDaySale(@Param("begin") String begin, @Param("end") String end);
+
+    List<Map<String, Object>> countMonthSale(@Param("begin") String begin, @Param("end") String end);
 }

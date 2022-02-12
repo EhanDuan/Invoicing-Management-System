@@ -44,11 +44,11 @@ public class SaleList implements Serializable {
     private String remarks;
 
     @ApiModelProperty(value = "销售日期")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date saleDate;
 
     @ApiModelProperty(value = "销售单号")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private String saleNumber;
 
     @ApiModelProperty(value = "交易状态")

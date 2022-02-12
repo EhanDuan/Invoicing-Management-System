@@ -5,11 +5,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lzj.admin.mapper.SaleListMapper;
+import com.lzj.admin.model.CountResultModel;
 import com.lzj.admin.pojo.Goods;
 import com.lzj.admin.pojo.SaleList;
 import com.lzj.admin.pojo.SaleListGoods;
 import com.lzj.admin.query.SaleListQuery;
 import com.lzj.admin.service.IGoodsService;
+import com.lzj.admin.service.IGoodsTypeService;
 import com.lzj.admin.service.ISaleListGoodsService;
 import com.lzj.admin.service.ISaleListService;
 import com.lzj.admin.utils.AssertUtil;
@@ -17,6 +19,8 @@ import com.lzj.admin.utils.DateUtil;
 import com.lzj.admin.utils.PageResultUtil;
 import com.lzj.admin.utils.StringUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -35,6 +39,9 @@ public class SaleListServiceImpl extends ServiceImpl<SaleListMapper, SaleList> i
 
     @Resource
     private IGoodsService goodsService;
+
+    @Resource
+    private IGoodsTypeService goodsTypeService;
 
     @Resource
     private ISaleListGoodsService saleListGoodsService;
@@ -86,8 +93,48 @@ public class SaleListServiceImpl extends ServiceImpl<SaleListMapper, SaleList> i
     public Map<String, Object> saleList(SaleListQuery saleListQuery) {
         IPage<SaleList> page = new Page<SaleList>(saleListQuery.getPage(), saleListQuery.getLimit());
 
-        page = this.baseMapper.saleListQuery(page, saleListQuery);
+        page = this.baseMapper.saleList(page, saleListQuery);
 
         return PageResultUtil.getResult(page.getTotal(), page.getRecords());
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void updateSaleListState(Integer id) {
+        SaleList saleList = this.getById(id);
+
+        AssertUtil.isTrue(null == saleList, "待结算的销售单记录不存在！");
+        AssertUtil.isTrue(saleList.getState() == 1, "该记录已结算！");
+        saleList.setState(1);
+        AssertUtil.isTrue(!(this.updateById(saleList)), "销售单结算失败！");
+    }
+
+    @Override
+    public Map<String, Object> countSale(SaleListQuery saleListQuery) {
+        if(null != saleListQuery.getTypeIds()){
+            List<Integer> typeIds = goodsTypeService.queryAllSubTypeIdsByTypeId(saleListQuery.getTypeId());
+            saleListQuery.setTypeIds(typeIds);
+        }
+
+        /**
+         * 1 --> start : 0
+         * 2 --> start : 10
+         * 3 --> start : 20
+         */
+        saleListQuery.setIndex((saleListQuery.getPage() - 1) * saleListQuery.getLimit());
+        Long count = this.baseMapper.countSaleTotal(saleListQuery);
+        List<CountResultModel> list = this.baseMapper.countSaleList(saleListQuery);
+
+        return PageResultUtil.getResult(count, list);
+    }
+
+    @Override
+    public List<Map<String, Object>> countDaySale(String begin, String end) {
+        return this.baseMapper.countDaySale(begin, end);
+    }
+
+    @Override
+    public List<Map<String, Object>> countMonthSale(String begin, String end) {
+        return this.baseMapper.countMonthSale(begin, end);
     }
 }
